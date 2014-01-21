@@ -1165,7 +1165,7 @@ define(function(require) {
     else if (!name) {
       callback(new EInvalid('attribute name cannot be an empty string'));
     }
-    else if (flag != null && 
+    else if (flag !== null && 
         flag !== XATTR_CREATE && flag !== XATTR_REPLACE) {
       callback(new EInvalid('invalid flag, must be null, XATTR_CREATE or XATTR_REPLACE'));
     }
@@ -1182,7 +1182,7 @@ define(function(require) {
     else if (!name) {
       callback(new EInvalid('attribute name cannot be an empty string'));
     }
-    else if (flag != null && 
+    else if (flag !== null && 
         flag !== XATTR_CREATE && flag !== XATTR_REPLACE) {
       callback(new EInvalid('invalid flag, must be null, XATTR_CREATE or XATTR_REPLACE'));
     }
@@ -1760,7 +1760,7 @@ define(function(require) {
       else {
         callback(null);
       }
-    };
+    }
 
     setxattr_file(context, path, name, value, flag, check_result);
   }
@@ -1905,7 +1905,7 @@ define(function(require) {
         callback(null);
       }
     }
-    utimes_file(context, path, atime, mtime, check_result)
+    utimes_file(context, path, atime, mtime, check_result);
   }
 
   function _futimes(fs, context, fd, atime, mtime, callback) {
@@ -1918,7 +1918,7 @@ define(function(require) {
       }
     }
 
-    var currentTime = Date.now()
+    var currentTime = Date.now();
     atime = (atime) ? atime : currentTime;
     mtime = (mtime) ? mtime : currentTime;
 
@@ -2296,7 +2296,7 @@ define(function(require) {
       callback(error);
     }
   };
-  FileSystem.prototype.setxattr = function (path, name, value, flag, callback) {
+  FileSystem.prototype.setxattr = function (path, name, value, flag, callback_) {
     var callback = maybeCallback(arguments[arguments.length - 1]);
     var _flag = (typeof flag != 'function') ? flag : null;
     var fs = this;
@@ -2325,7 +2325,7 @@ define(function(require) {
       callback(error);
     }
   };
-  FileSystem.prototype.fsetxattr = function (fd, name, value, flag, callback) {
+  FileSystem.prototype.fsetxattr = function (fd, name, value, flag, callback_) {
     var callback = maybeCallback(arguments[arguments.length - 1]);
     var _flag = (typeof flag != 'function') ? flag : null;
     var fs = this;
