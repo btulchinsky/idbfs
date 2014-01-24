@@ -1120,19 +1120,21 @@ define(function(require) {
         callback(error);
       }
       else {
-        node.atime = toUnixTimestamp(atime);
-        node.mtime = toUnixTimestamp(mtime);
+        node.atime = _atime;
+        node.mtime = _mtime;
         context.put(node.id, node, callback);
       }
     }
 
-    if ((typeof atime != 'number' && !isDate(atime)) || 
-        (typeof mtime != 'number' && !isDate(mtime))) {
-      callback(new EInvalid('atime and mtime must be number or date object'));
+    var _atime = toUnixTimestamp(atime);
+    var _mtime = toUnixTimestamp(mtime);
+
+    if (_atime === null || _mtime === null) {
+      callback(new EInvalid('atime and mtime must be a positive number or date object'));
     }
-    else if (atime < 0 || mtime < 0) {
-      callback(new EInvalid('atime and mtime must be positive integers'));
-    }
+    // else if ((isNumber(atime) && atime < 0) || (isNumber(mtime) && mtime < 0)) {
+    //   callback(new EInvalid('atime and mtime must be positive integers'));
+    // }
     else {
       find_node(context, path, update_times);
     }
@@ -1145,18 +1147,21 @@ define(function(require) {
         callback(error);
       }
       else {
-        node.atime = atime;
-        node.mtime = mtime;
+        node.atime = _atime;
+        node.mtime = _mtime;
         context.put(node.id, node, callback);
       }
     }
 
-    if (typeof atime != 'number' || typeof mtime != 'number') {
-      callback(new EInvalid('atime and mtime must be a number'));
+    var _atime = toUnixTimestamp(atime);
+    var _mtime = toUnixTimestamp(mtime);
+
+    if (_atime === null || _mtime === null) {
+      callback(new EInvalid('atime and mtime must be a positive number or date object'));
     }
-    else if (atime < 0 || mtime < 0) {
-      callback(new EInvalid('atime and mtime must be positive integers'));
-    }
+    // else if ((isNumber(atime) && atime < 0) || (isNumber(mtime) && mtime < 0)) {
+    //   callback(new EInvalid('atime and mtime must be positive integers'));
+    // }
     else {
       context.get(ofd.id, update_times);
     }
