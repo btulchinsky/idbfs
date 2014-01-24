@@ -13,6 +13,9 @@ define(function(require) {
   var guid = require('src/shared').guid;
   var hash = require('src/shared').hash;
   var nop = require('src/shared').nop;
+  var toUnixTimestamp = require('src/shared').toUnixTimestamp;
+  var isDate = require('src/shared').isDate;
+  var isNumber = require('src/shared').isNumber;
 
   var EExists = require('src/error').EExists;
   var EIsDirectory = require('src/error').EIsDirectory;
@@ -79,12 +82,13 @@ define(function(require) {
 
   function SuperNode(atime, ctime, mtime) {
     var now = Date.now();
+    now = toUnixTimestamp(now);
 
     this.id = SUPER_NODE_ID;
     this.mode = MODE_META;
-    this.atime = atime || now;
-    this.ctime = ctime || now;
-    this.mtime = mtime || now;
+    this.atime = toUnixTimestamp(atime) || now;
+    this.ctime = toUnixTimestamp(ctime) || now;
+    this.mtime = toUnixTimestamp(mtime) || now;
     this.rnode = guid(); // root node id (randomly generated)
   }
 
@@ -94,13 +98,14 @@ define(function(require) {
 
   function Node(id, mode, size, atime, ctime, mtime, flags, xattrs, nlinks, version) {
     var now = Date.now();
+    now = toUnixTimestamp(now);
 
     this.id = id || guid();
     this.mode = mode || MODE_FILE;  // node type (file, directory, etc)
     this.size = size || 0; // size (bytes for files, entries for directories)
-    this.atime = atime || now; // access time
-    this.ctime = ctime || now; // creation time
-    this.mtime = mtime || now; // modified time
+    this.atime = toUnixTimestamp(atime) || now; // access time
+    this.ctime = toUnixTimestamp(ctime) || now; // creation time
+    this.mtime = toUnixTimestamp(mtime) || now; // modified time
     this.flags = flags || []; // file flags
     this.xattrs = xattrs || {}; // extended attributes
     this.nlinks = nlinks || 0; // links count
@@ -1115,14 +1120,15 @@ define(function(require) {
         callback(error);
       }
       else {
-        node.atime = atime;
-        node.mtime = mtime;
+        node.atime = toUnixTimestamp(atime);
+        node.mtime = toUnixTimestamp(mtime);
         context.put(node.id, node, callback);
       }
     }
 
-    if (typeof atime != 'number' || typeof mtime != 'number') {
-      callback(new EInvalid('atime and mtime must be number'));
+    if ((typeof atime != 'number' && !isDate(atime)) || 
+        (typeof mtime != 'number' && !isDate(mtime))) {
+      callback(new EInvalid('atime and mtime must be number or date object'));
     }
     else if (atime < 0 || mtime < 0) {
       callback(new EInvalid('atime and mtime must be positive integers'));

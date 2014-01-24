@@ -15,10 +15,62 @@ define(function(require) {
 
   function nop() {}
 
+  /*
+   * toUnixTimestamp (modified)
+   * Taken from https://github.com/joyent/node/blob/master/lib/fs.js#L854-L863
+   */
+  function toUnixTimestamp(time) {
+    if (isNumber(time) && time >= 0) {
+      return time;
+    }
+    if (isDate(time)) {
+      // convert to 123.456 UNIX timestamp
+      return time.getTime() / 1000;
+    }
+    // throw new Error('Cannot parse time: ' + time);
+    return null;
+  }
+
+  /*
+   * isNumber
+   * Taken from https://github.com/joyent/node/blob/master/lib/util.js#L469-L471
+   */
+  function isNumber(arg) {
+    return typeof arg === 'number';
+  }
+
+  /*
+   * isDate
+   * Taken from https://github.com/joyent/node/blob/master/lib/util.js#L499-L501
+   */
+  function isDate(d) {
+    return isObject(d) && objectToString(d) === '[object Date]';
+  }
+
+  /*
+   * isObject
+   * Taken from https://github.com/joyent/node/blob/master/lib/util.js#L494-L496
+   */
+  function isObject(arg) {
+    return typeof arg === 'object' && arg !== null;
+  }
+
+  /*
+   * objectToString
+   * Taken from https://github.com/joyent/node/blob/master/lib/util.js#L530-L532
+   */
+
+  function objectToString(o) {
+    return Object.prototype.toString.call(o);
+  }
+
   return {
     guid: guid,
     hash: hash,
-    nop: nop
+    nop: nop,
+    toUnixTimestamp: toUnixTimestamp,
+    isDate: isDate,
+    isNumber: isNumber
   };
 
 });
